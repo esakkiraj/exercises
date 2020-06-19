@@ -1,18 +1,22 @@
-function SpicyCurry(fn) {
+module.exports = function (fn) {
+  let noOfArgsNeeded = fn.length
 
-  var totalArgumentsNeeded = fn.length;
+  const argsCollector = (existingArgs, ...args) => {
 
-  function ArgsCollector() {
-    var args = Array.prototype.slice.call(arguments); // Converting Array-like arguments into Array
+    const totalArgs = [...existingArgs, ...args]
 
-    if( args.length >= totalArgumentsNeeded ) {
-      return fn.apply(fn, args.slice(0, totalArgumentsNeeded)); // If neccessary number of arguments are collected then execute the fn and return the result
+    if (totalArgs.length >= noOfArgsNeeded) {
+
+      const result = fn.apply(null, totalArgs)
+      return result
+
     } else {
-      return ArgsCollector.bind.apply(ArgsCollector, [null].concat(args)); // Else send the ArgsCollector in the mission to collect the remaining arguments. Tip from 2ality.com spread operator article. 
+
+      return argsCollector.bind(null, totalArgs)
+
     }
   }
 
-  return ArgsCollector; // Function whose task is to collect the arguments.
-}
+  return argsCollector.bind(null, [])
 
-module.exports = SpicyCurry;
+}

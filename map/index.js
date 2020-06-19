@@ -1,13 +1,11 @@
-module.exports = function( inputArr, cb, ctx ) {
+module.exports = (arr, cb, context) => {
+  const result = []
 
-  var length = Array.isArray(inputArr) ? inputArr.length : 0;
-  var result = [];
-  var cbWithCtx = cb.bind(ctx); // cb has been binded with ctx
-  for( var i=0; i<length; i++) {
+  for (let i = 0; i < arr.length; i++) {
     result.push(
-      cbWithCtx(inputArr[i], i, inputArr)
-    );
+      cb.call(context, arr[i], i, arr)
+    )
   }
 
-  return result;
+  return result
 }

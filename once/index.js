@@ -1,14 +1,15 @@
-function OnceReducer(fn) {
-  var executedOnce = false, result;
+module.exports = function (fn) {
 
-  return function() {
-    if( executedOnce ) {
-      return result;
+  let isCalled = false
+  let result
+
+  return function (...args) {
+    if (!isCalled) {
+      result = fn.apply(this, args)
+      isCalled = true
     }
-    executedOnce = true;
-    result = fn.apply(this, arguments);
-    return result;
-  }
-}
 
-module.exports = OnceReducer;
+    return result
+  }
+
+}

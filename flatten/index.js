@@ -1,18 +1,18 @@
-// Code needs improvement
-function Flatter(arrArgs, resultArr) {
-  var result = resultArr || [];
+module.exports = (a) => {
 
-  for( var i=0; i<arrArgs.length; i++) {
-    var val = arrArgs[i];
+  const result = []
 
-    if( Array.isArray(val) ) {
-      Flatter(val, result);
-    } else {
-      result.push(val);
+  const recursiveUtil = (arr) => {
+    for (var i of arr) {
+      if (Array.isArray(i)) {
+        recursiveUtil(i)
+      } else {
+        result.push(i)
+      }
     }
   }
-  
-  return result;
-}
 
-module.exports = Flatter;
+  recursiveUtil(a)
+
+  return result
+}
