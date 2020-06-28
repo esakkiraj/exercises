@@ -1,33 +1,26 @@
-function Middleware() {
-  var cb = [];
-  var that = this; // Storing 'this' ref for supplying as context for middleware 
+class Middleware {
+  constructor() {
+    this.funcs = []
+    this.finalFunc = null
+  }
 
-  // Middleware Task Runner
-  function RunNextMiddleware() {
-    if( cb.length > 0 ) {
-      var middlewareFunc = cb.shift();
-      middlewareFunc.call(that, RunNextMiddleware);
+  use(fn) {
+    this.funcs.push(fn)
+  }
+
+  _runNextInQueue() {
+    const nextInQueue = this.funcs.shift()
+    if (nextInQueue) {
+      nextInQueue.call(this, this._runNextInQueue.bind(this))
+    } else if (this.finalFunc) {
+      this.finalFunc.call(this)
     }
   }
 
-  // middleware functions to the queue
-  this.use = function(fn) {
-    cb.push(fn);
-  }
-
-  // Execute the middleware queue
-  this.go = function(cb) {
-    // Run middle task runner
-    RunNextMiddleware();
-
-   // take's out middleware function from queue for processing
-   var queuePoller = setInterval(function() {
-     if( cb.length == 0 ) {
-       clearInterval(queuePoller);
-       cb.call(that);
-     }
-   }, 100);
+  go(finalFunc) {
+    this.finalFunc = finalFunc
+    this._runNextInQueue()
   }
 }
 
-module.exports = Middleware;
+module.exports = Middleware
